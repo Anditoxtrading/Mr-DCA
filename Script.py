@@ -253,7 +253,7 @@ def obtener_datos_kline(symbol):
             print(f"El valor del RSI es: {rsi_value_rounded}")
             
             # Si el RSI es menor que el umbral, abrir posición larga
-            if rsi_value < 150:
+            if rsi_value < 31:
                 print("RSI es menor que el umbral de sobreventa. Abriendo posición larga...")
                 base_asset_qty_final = qty_step(symbol, amount_usdt)
                 if base_asset_qty_final is not None:
