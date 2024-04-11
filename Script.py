@@ -233,8 +233,8 @@ def obtener_datos_kline(symbol):
         response = session.get_kline(
             symbol=symbol,
             category="linear",
-            interval=1,  # Intervalo de tiempo en minutos (ajusta según tu estrategia)
-            limit=30,  
+            interval=3,  # Intervalo de tiempo en minutos (ajusta según tu estrategia)
+            limit=100,  
         )
 
         if response['retCode'] == 0:
@@ -260,7 +260,7 @@ def obtener_datos_kline(symbol):
                     abrir_posicion_largo(symbol, base_asset_qty_final, distancia_porcentaje_sl)
         
         # Esperar 1 minuto antes de verificar el RSI nuevamente
-        time.sleep(60)
+        time.sleep(120)
 
 def cancelar_ordenes(symbol, precio_entrada_original):
     pnl_enviado = False  # Variable de control para verificar si ya se envió el mensaje de PNL
@@ -314,7 +314,7 @@ def cancelar_ordenes(symbol, precio_entrada_original):
             print(f"Error en la cancelación de órdenes: {e}")
         finally:
             # Esperar un tiempo antes de la próxima iteración
-            time.sleep(2)
+            time.sleep(5)
 
 if __name__ == "__main__":
     # Obtener el precio de entrada original
