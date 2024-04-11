@@ -271,6 +271,7 @@ def cancelar_ordenes(symbol, precio_entrada_original):
             if positions_list and any(position['size'] != '0' for position in positions_list):
                 # Restablecer pnl_enviado si se abre una nueva posición
                 pnl_enviado = False
+            
                 # Calcular el precio de take profit ajustado
                 current_price = Decimal(positions_list[0]['avgPrice'])
                 if current_price != precio_entrada_original:
@@ -302,12 +303,15 @@ def cancelar_ordenes(symbol, precio_entrada_original):
                 session.cancel_all_orders(category="linear", symbol=symbol)
                 if not pnl_enviado:  # Verificar si el mensaje de PNL aún no se ha enviado
                     # Obtener la lista de órdenes cerradas y procesar la PNL
-                    pnl_cerrada = float(session.get_closed_pnl(category="linear", symbol=symbol, side="Sell", limit=1)['result']['list'][0]['closedPnl'])
-                    pnl_cerrada_round = round(pnl_cerrada, 2)
-                    mensaje_pnl = f"Cerrando posición en {symbol}, 💰💰 PNL realizado 💰💰: {pnl_cerrada_round} USDT."
-                    enviar_mensaje_telegram(chat_id=chat_id, mensaje=mensaje_pnl)
-                    print(mensaje_pnl)
-                    pnl_enviado = True  # Actualizar la variable de control a True
+                    closed_pnl_response = session.get_closed_pnl(category="linear", symbol=symbol, side="Sell", limit=1)
+                    if 'result' in closed_pnl_response and closed_pnl_response['result']['list']:  # Verificar si la lista no está vacía
+                        pnl_cerrada = float(closed_pnl_response['result']['list'][0]['closedPnl'])
+                        pnl_cerrada_round = round(pnl_cerrada, 2)
+                        mensaje_pnl = f"Cerrando posición en {symbol}, 💰💰 PNL realizado 💰💰: {pnl_cerrada_round} USDT."
+                        enviar_mensaje_telegram(chat_id=chat_id, mensaje=mensaje_pnl)
+                        print(mensaje_pnl)
+                        pnl_enviado = True  # Actualizar la variable de control a True
+
                 
 
         except Exception as e:
